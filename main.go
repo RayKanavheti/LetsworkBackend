@@ -1,9 +1,9 @@
 package main
 
-import (
-  "fmt"
+import(
+  "github.com/raykanavheti/LetsworkBackend/models"
 )
 
 func main() {
-fmt.Println("Hello world")
+	models.InitDB()
 }
