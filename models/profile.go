@@ -14,4 +14,5 @@ type Profile struct {
 	FacebookProfile string `sql:"type:VARCHAR(150)"`
 	TwitterProfile  string `sql:"type:VARCHAR(150)"`
 	LinkedInProfile string `sql:"type:VARCHAR(150)"`
+	UserID	uint
 }
