@@ -25,23 +25,24 @@ type User struct {
 	Portfolio  []*Portfolio `json:"-" gorm:"save_associations:false"`
 	Skills     []*Skill     `json:"-" gorm:"save_associations:false"`
 	UUID       string       `json:"-"`
+	Verified   bool
 }
 
-// Validate Email
+// ValidateEmail validates an email received
 func validateEmail(email string) bool {
 	Re := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,8}$`)
 	return Re.MatchString(email)
 }
 
-// SendConfirmationLink
+// SendConfirmationLink method sends a link to the user's email with a uuid generated code
 func SendConfirmationLink(userEmail string) {
 	m := gomail.NewMessage()
-	m.SetHeader("From", "info@letswork.co.zw")
+	m.SetHeader("From", "ray@health263.systems")
 	m.SetHeader("To", userEmail)
 	m.SetHeader("Subject", "Confirmation Link")
 	m.SetBody("text/html", `<!DOCTYPE html><html><head></head><body><h2>This is a test</h2></body></html>`)
 
-	d := gomail.NewDialer("mail.health263.systems", 25, "ray@health263.systems", "&vXEmW,J3pW]")
+	d := gomail.NewDialer("mail.health263.systems", 25, "ray@health263.systems", "Raycanas199425%")
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
@@ -51,7 +52,7 @@ func SendConfirmationLink(userEmail string) {
 
 }
 
-//CreateUser method
+//CreateUser method ccreates a new user
 func CreateUser(user User) (User, error) {
 	if !validateEmail(user.Email) {
 		return user, errors.New("Invalid Email")
