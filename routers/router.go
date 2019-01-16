@@ -25,6 +25,7 @@ func InitRoutes() *mux.Router {
 	router.HandleFunc("/api/profile", profile.CreateProfile).Methods("POST")
 
 	router.HandleFunc("/api/educations", education.CreateEducations).Methods("POST")
+
 	router.HandleFunc("/api/portfolios", portfolio.CreatePortfolios).Methods("POST")
 		return router
 }
