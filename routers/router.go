@@ -8,6 +8,7 @@ import (
 var (
 	user = new(controllers.UserController)
 	profile = new(controllers.ProfileController)
+	education = new(controllers.EducationController)
 )
 
 //InitRoutes : Registering all system Routes.
@@ -21,5 +22,7 @@ func InitRoutes() *mux.Router {
   router.HandleFunc("/api/reset_password/{email}", user.SendRestLink).Methods("GET")
 
 	router.HandleFunc("/api/profile", profile.CreateProfile).Methods("POST")
-	return router
+
+	router.HandleFunc("/api/educations", education.CreateEducations).Methods("POST")
+		return router
 }

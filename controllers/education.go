@@ -12,13 +12,13 @@ import (
 //EducationController interface
 type EducationController struct{}
 
-// CreateEducation creates a new education for a user
-func (catCntrl *EducationController) CreateEducation(w http.ResponseWriter, r *http.Request) {
+// CreateEducations creates a new education for a user
+func (catCntrl *EducationController) CreateEducations(w http.ResponseWriter, r *http.Request) {
 	responseWriter := util.GetResponseWriter(w, r)
 	defer responseWriter.Close()
-	education := models.Education{}
+	educations := []models.Education{}
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&education)
+	err := decoder.Decode(&educations)
 	if err != nil {
 		mapError := map[string]string{"message": err.Error()}
 		errj, _ := json.Marshal(mapError)
@@ -26,14 +26,14 @@ func (catCntrl *EducationController) CreateEducation(w http.ResponseWriter, r *h
 		responseWriter.Write(errj)
 	} else {
 		valid := validation.Validation{}
-		b, err := valid.Valid(education)
+		b, err := valid.Valid(educations)
 		if !b {
 			mapError := map[string]string{"message": err.Error()}
 			errj, _ := json.Marshal(mapError)
 			responseWriter.WriteHeader(400)
 			responseWriter.Write(errj)
 		} else {
-			cat, err := models.CreateEducation(education)
+			cat, err := models.CreateEducations(educations)
 			if err == nil {
 				uj, _ := json.Marshal(cat)
 				responseWriter.Header().Set("Content-Type", "application/json")
