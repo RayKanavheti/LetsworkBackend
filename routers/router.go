@@ -33,6 +33,7 @@ func InitRoutes() *mux.Router {
 	router.HandleFunc("/api/address", address.CreateAddress).Methods("POST")
 
 	router.HandleFunc("/api/project", project.CreateProject).Methods("POST")
+	router.HandleFunc("/api/project_update", project.UpdateProject).Methods("PUT")
 
 		return router
 }

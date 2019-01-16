@@ -18,11 +18,11 @@ type User struct {
 	Username   string       `sql:"not null;unique" valid:"Required"`
 	Email      string       `sql:"type:VARCHAR(50);not null;unique"`
 	Password   string       `json:"-"`
-	Profile    Profile      `gorm:"save_associations:false"`
-	Educations []*Education
-	Address    Address      `gorm:"save_associations:false"`
-	Financial  Financial    `gorm:"save_associations:false"`
-	Portfolios  []*Portfolio
+	Profile    Profile      `gorm:"foreignkey:UserID"`
+	Educations []*Education `gorm:"foreignkey:UserID"`
+	Address    Address      `gorm:"foreignkey:UserID"`
+	Financial  Financial    `gorm:"foreignkey:UserID"`
+	Portfolios  []*Portfolio `gorm:"foreignkey:UserID"`
 	Skills     []Skill      `gorm:"many2many:user_skills;"`
 	UUID       string       `json:"-"`
 	ResetKey   string       `json:"-"`
