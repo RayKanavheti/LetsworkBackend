@@ -14,17 +14,21 @@ type Portfolio struct {
 	UserID uint
 }
 
-// CreatePortfolio method creates portfolio for the user
-func CreatePortfolio(userPortfolio Portfolio) (Portfolio, error) {
-
-	db, err := getDBConnection()
-	defer db.Close()
-	if err == nil {
-		err := db.Save(&userPortfolio).Error
-		if err == nil {
-			return userPortfolio, nil
+// CreatePortfolios method creates multiple Portfolios for the user
+func CreatePortfolios (userPortfolios []Portfolio) ([]Portfolio, error) {
+  db, err := getDBConnection()
+  defer db.Close()
+  if err == nil {
+    for _, userPortfolio := range userPortfolios{
+      err := db.Save(&userPortfolio).Error
+      if err != nil {
+				return userPortfolios, errors.New("Unable to create portfolio for session" + err.Error())
+			}
+    }
+    if err == nil {
+			return userPortfolios, nil
 		}
-		return userPortfolio, errors.New("Unable to create portfolio" + err.Error())
-	}
-	return userPortfolio, errors.New("Unable to get database connection")
+      return userPortfolios, errors.New("Unable to create Portfolio" + err.Error())
+  }
+  	return userPortfolios, errors.New("Unable to get database connection")
 }
