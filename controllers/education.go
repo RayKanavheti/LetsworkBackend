@@ -9,16 +9,16 @@ import (
 	"github.com/raykanavheti/LetsworkBackend/models"
 )
 
-//ProfileController interface
-type ProfileController struct{}
+//EducationController interface
+type EducationController struct{}
 
-// CreateProfile creates a new Profile for a user
-func (catCntrl *ProfileController) CreateProfile(w http.ResponseWriter, r *http.Request) {
+// CreateEducation creates a new education for a user
+func (catCntrl *EducationController) CreateEducation(w http.ResponseWriter, r *http.Request) {
 	responseWriter := util.GetResponseWriter(w, r)
 	defer responseWriter.Close()
-	profile := models.Profile{}
+	education := models.Education{}
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&profile)
+	err := decoder.Decode(&education)
 	if err != nil {
 		mapError := map[string]string{"message": err.Error()}
 		errj, _ := json.Marshal(mapError)
@@ -26,14 +26,14 @@ func (catCntrl *ProfileController) CreateProfile(w http.ResponseWriter, r *http.
 		responseWriter.Write(errj)
 	} else {
 		valid := validation.Validation{}
-		b, err := valid.Valid(profile)
+		b, err := valid.Valid(education)
 		if !b {
 			mapError := map[string]string{"message": err.Error()}
 			errj, _ := json.Marshal(mapError)
 			responseWriter.WriteHeader(400)
 			responseWriter.Write(errj)
 		} else {
-			cat, err := models.CreateProfile(profile)
+			cat, err := models.CreateEducation(education)
 			if err == nil {
 				uj, _ := json.Marshal(cat)
 				responseWriter.Header().Set("Content-Type", "application/json")
