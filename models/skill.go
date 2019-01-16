@@ -7,5 +7,4 @@ import (
 type Skill struct {
 	gorm.Model
   Title     string
-
 }

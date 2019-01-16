@@ -17,6 +17,7 @@ type Profile struct {
 	TwitterProfile  string `sql:"type:VARCHAR(150)"`
 	LinkedInProfile string `sql:"type:VARCHAR(150)"`
 	UserID          uint
+
 }
 
 // CreateProfile method creates a new user

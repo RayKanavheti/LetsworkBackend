@@ -10,4 +10,5 @@ type Financial struct {
 	Bank    Bank
 	Ecocash Ecocash
 	UserID  uint
+
 }

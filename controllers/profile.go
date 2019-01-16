@@ -13,7 +13,7 @@ import (
 type ProfileController struct{}
 
 // CreateUser creates a new Profile for a user
-func (catCntrl *UserController) CreateProfile(w http.ResponseWriter, r *http.Request) {
+func (catCntrl *ProfileController) CreateProfile(w http.ResponseWriter, r *http.Request) {
 	responseWriter := util.GetResponseWriter(w, r)
 	defer responseWriter.Close()
 	profile := models.Profile{}

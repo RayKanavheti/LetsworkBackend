@@ -10,5 +10,6 @@ type Address struct {
   Suburb  string `sql:"type:VARCHAR(30)"`
   City    string `sql:"type:VARCHAR(30)"`
   Country string `sql:"type:VARCHAR(30)"`
-  UserID  uint
+ UserID  uint
+
 }

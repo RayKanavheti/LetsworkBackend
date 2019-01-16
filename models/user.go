@@ -15,18 +15,18 @@ import (
 // User model
 type User struct {
 	gorm.Model
-	Username   string `sql:"not null;unique" valid:"Required"`
-	Email      string `sql:"type:VARCHAR(50);not null;unique"`
-	Password   string
-	Profile    Profile      `json:"-" gorm:"save_associations:false"`
-	Educations []*Education `json:"-" gorm:"save_associations:false"`
-	Address    Address      `json:"-" gorm:"save_associations:false"`
-	Financial  Financial    `json:"-" gorm:"save_associations:false"`
-	Portfolio  []*Portfolio `json:"-" gorm:"save_associations:false"`
-	Skills     []*Skill     `json:"-" gorm:"save_associations:false"`
-	UUID       string       `json:"-"`
-	ResetKey   string       `json:"-"`
-	Verified   bool
+	Username    string `sql:"not null;unique" valid:"Required"`
+	Email       string `sql:"type:VARCHAR(50);not null;unique"`
+	Password    string `json:"-"`
+	Profile     Profile `gorm:"save_associations:false"`
+	Educations  []*Education `gorm:"save_associations:false"`
+	Address     Address `gorm:"save_associations:false"`
+	Financial   Financial `gorm:"save_associations:false"`
+	Portfolio   []*Portfolio `gorm:"save_associations:false"`
+	Skills      []Skill `gorm:"many2many:user_skills;"`
+	UUID        string `json:"-"`
+	ResetKey    string `json:"-"`
+	Verified    bool
 }
 
 // ValidateEmail validates an email received
@@ -74,6 +74,19 @@ func CreateUser(user User) (User, error) {
 	}
 	return user, errors.New("Unable to getdatabase connection")
 }
+//UpdateUser method update a user
+func UpdateUser(user User) (User, error) {
+	db, err := getDBConnection()
+	defer db.Close()
+	if err == nil {
+		err := db.Save(&user).Error
+		if err == nil {
+			return user, nil
+		}
+			return user, errors.New("Unable to create user for session " + err.Error())
+	}
+	return user, errors.New("Unable to get database connection")
+}
 
 //GetUsers function. Lists all Users with full details
 func GetUsers() ([]User, error) {
@@ -81,7 +94,7 @@ func GetUsers() ([]User, error) {
 	db, err := getDBConnection()
 	defer db.Close()
 	if err == nil {
-		db.Find(&user)
+		db.Preload("Profile").Find(&user)
 		if err == nil {
 			return user, nil
 		}
@@ -96,7 +109,7 @@ func GetUserByID(id int) (User, error) {
 	db, err := getDBConnection()
 	defer db.Close()
 	if err == nil {
-		db.Where("id = ?", id).Find(&user)
+		db.Preload("Profile").Where("id = ?", id).Find(&user)
 		if err == nil {
 			if user.ID == 0 {
 				return user, errors.New("Unable to get user for session")
@@ -163,16 +176,16 @@ func UpdateVerificationField(user User) (User, error) {
 }
 
 // ResetPassword sends a link to reset password
-func ResetPassword(userEmail string) (string) {
-	 status := SendResetPasswordlink(userEmail)
-	 	fmt.Printf("status %s", status)
+func ResetPassword(userEmail string) string {
+	status := SendResetPasswordlink(userEmail)
 	if status == "error" {
-			return "error"
+		return "error"
 	}
 	return "success"
 }
+
 // SendResetPasswordlink sends a link to reset password
-func SendResetPasswordlink(userEmail string) (string){
+func SendResetPasswordlink(userEmail string) string {
 	m := gomail.NewMessage()
 	m.SetHeader("From", "ray@health263.systems")
 	m.SetHeader("To", userEmail)

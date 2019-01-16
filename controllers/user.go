@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -11,6 +10,14 @@ import (
 	"github.com/raykanavheti/LetsworkBackend/controllers/util"
 	"github.com/raykanavheti/LetsworkBackend/models"
 )
+
+// Res interface
+type Res struct {
+	Response string
+	Message  string
+}
+
+var res []Res
 
 //UserController interface
 type UserController struct{}
@@ -50,6 +57,45 @@ func (catCntrl *UserController) CreateUser(w http.ResponseWriter, r *http.Reques
 			}
 		}
 	}
+}
+//UpdateUser method update a user
+
+func (catCntrl *UserController) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	responseWriter := util.GetResponseWriter(w, r)
+	defer responseWriter.Close()
+	user := models.User{}
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&user)
+	if err != nil {
+		mapError := map[string]string{"message": err.Error()}
+		errj, _ := json.Marshal(mapError)
+		responseWriter.WriteHeader(400)
+		responseWriter.Write(errj)
+	} else {
+		valid := validation.Validation{}
+		b, err := valid.Valid(user)
+		if !b {
+			mapError := map[string]string{"message": err.Error()}
+			errj, _ := json.Marshal(mapError)
+			responseWriter.WriteHeader(400)
+			responseWriter.Write(errj)
+		} else {
+			cat, err := models.UpdateUser(user)
+			if err == nil {
+				uj, _ := json.Marshal(cat)
+				responseWriter.Header().Set("Content-Type", "application/json")
+				responseWriter.WriteHeader(201)
+				responseWriter.Write(uj)
+			} else {
+				mapError := map[string]string{"message": err.Error()}
+				errj, _ := json.Marshal(mapError)
+				responseWriter.WriteHeader(400)
+				responseWriter.Write(errj)
+			}
+		}
+	}
+
+
 }
 
 //GetAllUsers gets all users
@@ -129,7 +175,8 @@ func (catCntrl *UserController) GetUserByUUID(w http.ResponseWriter, req *http.R
 // SendRestLink It sends a link for a user to reset their password
 func (catCntrl *UserController) SendRestLink(w http.ResponseWriter, req *http.Request) {
 	responseWriter := util.GetResponseWriter(w, req)
-	var buffer bytes.Buffer
+	res = append(res, Res{Response: "success", Message: "Sending email successfull !!!"})
+	res = append(res, Res{Response: "error", Message: "Sending email failed !!!"})
 	defer responseWriter.Close()
 	vars := mux.Vars(req)
 	userEmail := vars["email"]
@@ -140,19 +187,14 @@ func (catCntrl *UserController) SendRestLink(w http.ResponseWriter, req *http.Re
 		invokeSendLinkStatus := models.ResetPassword(userEmail)
 		if invokeSendLinkStatus == "success" {
 			responseWriter.Header().Add("Content Type", "application/json")
-			buffer.WriteString(`{Response: "success", Message: "Email was sent successfully, Check your email !!!"}`)
-
-			s := json.NewEncoder(w).Encode(buffer.String())
-			r, _ := json.Marshal(s)
+			r, _ := json.Marshal(res[0])
 			responseWriter.Write(r)
 
 		} else {
 			responseWriter.Header().Add("Content Type", "application/json")
-			buffer.WriteString(`{Response: "error", Message: "Sending email failed !!!"}`)
-
-			s := json.NewEncoder(w).Encode(buffer.String())
-			r, _ := json.Marshal(s)
+			r, _ := json.Marshal(res[1])
 			responseWriter.Write(r)
+
 		}
 
 	} else {
