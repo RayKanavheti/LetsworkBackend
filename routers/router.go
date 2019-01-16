@@ -10,6 +10,7 @@ var (
 	profile = new(controllers.ProfileController)
 	education = new(controllers.EducationController)
 	portfolio = new(controllers.PortfolioController)
+	address = new(controllers.AddressController)
 )
 
 //InitRoutes : Registering all system Routes.
@@ -27,5 +28,7 @@ func InitRoutes() *mux.Router {
 	router.HandleFunc("/api/educations", education.CreateEducations).Methods("POST")
 
 	router.HandleFunc("/api/portfolios", portfolio.CreatePortfolios).Methods("POST")
+
+	router.HandleFunc("/api/address", address.CreateAddress).Methods("POST")
 		return router
 }
