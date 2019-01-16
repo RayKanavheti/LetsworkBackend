@@ -12,17 +12,21 @@ type Education struct {
   Period        string
   UserID        uint
 }
-// CreateEducation method creates address for the user
-func CreateEducation(userEducation Education) (Education, error) {
-
-	db, err := getDBConnection()
-	defer db.Close()
-	if err == nil {
-		err := db.Save(&userEducation).Error
-		if err == nil {
-			return userEducation, nil
+// CreateEducations method creates multiple educations for the user
+func CreateEducations (userEducations []Education) ([]Education, error) {
+  db, err := getDBConnection()
+  defer db.Close()
+  if err == nil {
+    for _, userEducation := range userEducations {
+      err := db.Save(&userEducation).Error
+      if err != nil {
+				return userEducations, errors.New("Unable to create education for session" + err.Error())
+			}
+    }
+    if err == nil {
+			return userEducations, nil
 		}
-		return userEducation, errors.New("Unable to create education" + err.Error())
-	}
-	return userEducation, errors.New("Unable to get database connection")
+      return userEducations, errors.New("Unable to create education" + err.Error())
+  }
+  	return userEducations, errors.New("Unable to get database connection")
 }
