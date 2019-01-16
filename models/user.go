@@ -15,18 +15,18 @@ import (
 // User model
 type User struct {
 	gorm.Model
-	Username    string `sql:"not null;unique" valid:"Required"`
-	Email       string `sql:"type:VARCHAR(50);not null;unique"`
-	Password    string `json:"-"`
-	Profile     Profile `gorm:"save_associations:false"`
-	Educations  []*Education `gorm:"save_associations:false"`
-	Address     Address `gorm:"save_associations:false"`
-	Financial   Financial `gorm:"save_associations:false"`
-	Portfolio   []*Portfolio `gorm:"save_associations:false"`
-	Skills      []Skill `gorm:"many2many:user_skills;"`
-	UUID        string `json:"-"`
-	ResetKey    string `json:"-"`
-	Verified    bool
+	Username   string       `sql:"not null;unique" valid:"Required"`
+	Email      string       `sql:"type:VARCHAR(50);not null;unique"`
+	Password   string       `json:"-"`
+	Profile    Profile      `gorm:"save_associations:false"`
+	Educations []*Education `gorm:"save_associations:false"`
+	Address    Address      `gorm:"save_associations:false"`
+	Financial  Financial    `gorm:"save_associations:false"`
+	Portfolio  []*Portfolio `gorm:"save_associations:false"`
+	Skills     []Skill      `gorm:"many2many:user_skills;"`
+	UUID       string       `json:"-"`
+	ResetKey   string       `json:"-"`
+	Verified   bool
 }
 
 // ValidateEmail validates an email received
@@ -74,6 +74,7 @@ func CreateUser(user User) (User, error) {
 	}
 	return user, errors.New("Unable to getdatabase connection")
 }
+
 //UpdateUser method update a user
 func UpdateUser(user User) (User, error) {
 	db, err := getDBConnection()
@@ -83,7 +84,7 @@ func UpdateUser(user User) (User, error) {
 		if err == nil {
 			return user, nil
 		}
-			return user, errors.New("Unable to create user for session " + err.Error())
+		return user, errors.New("Unable to create user for session " + err.Error())
 	}
 	return user, errors.New("Unable to get database connection")
 }
