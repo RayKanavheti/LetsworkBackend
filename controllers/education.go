@@ -3,8 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/astaxie/beego/validation"
 	"github.com/raykanavheti/LetsworkBackend/controllers/util"
 	"github.com/raykanavheti/LetsworkBackend/models"
 )
@@ -25,14 +23,6 @@ func (catCntrl *EducationController) CreateEducations(w http.ResponseWriter, r *
 		responseWriter.WriteHeader(400)
 		responseWriter.Write(errj)
 	} else {
-		valid := validation.Validation{}
-		b, err := valid.Valid(educations)
-		if !b {
-			mapError := map[string]string{"message": err.Error()}
-			errj, _ := json.Marshal(mapError)
-			responseWriter.WriteHeader(400)
-			responseWriter.Write(errj)
-		} else {
 			cat, err := models.CreateEducations(educations)
 			if err == nil {
 				uj, _ := json.Marshal(cat)
@@ -45,6 +35,5 @@ func (catCntrl *EducationController) CreateEducations(w http.ResponseWriter, r *
 				responseWriter.WriteHeader(400)
 				responseWriter.Write(errj)
 			}
-		}
 	}
 }

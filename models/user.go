@@ -19,10 +19,10 @@ type User struct {
 	Email      string       `sql:"type:VARCHAR(50);not null;unique"`
 	Password   string       `json:"-"`
 	Profile    Profile      `gorm:"save_associations:false"`
-	Educations []*Education `gorm:"save_associations:false"`
+	Educations []*Education
 	Address    Address      `gorm:"save_associations:false"`
 	Financial  Financial    `gorm:"save_associations:false"`
-	Portfolio  []*Portfolio `gorm:"save_associations:false"`
+	Portfolios  []*Portfolio
 	Skills     []Skill      `gorm:"many2many:user_skills;"`
 	UUID       string       `json:"-"`
 	ResetKey   string       `json:"-"`
@@ -91,17 +91,17 @@ func UpdateUser(user User) (User, error) {
 
 //GetUsers function. Lists all Users with full details
 func GetUsers() ([]User, error) {
-	user := []User{}
+	users := []User{}
 	db, err := getDBConnection()
 	defer db.Close()
 	if err == nil {
-		db.Preload("Profile").Find(&user)
+		db.Preload("Profile").Preload("Educations").Preload("Address").Preload("Portfolios").Preload("Financial").Find(&users)
 		if err == nil {
-			return user, nil
+			return users, nil
 		}
 		return []User{}, errors.New("Unable to get user for session")
 	}
-	return user, errors.New("Unable to getdatabase connection")
+	return users, errors.New("Unable to getdatabase connection")
 }
 
 //GetUserByID getting the details of user using the user ID.
