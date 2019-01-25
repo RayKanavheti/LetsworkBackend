@@ -6,10 +6,12 @@ import (
 
 	"github.com/raykanavheti/LetsworkBackend/models"
 	"github.com/raykanavheti/LetsworkBackend/routers"
+	"github.com/rs/cors"
 )
 
 func main() {
 	models.InitDB()
 	router := routers.InitRoutes()
-	log.Fatal(http.ListenAndServe(":8000", router))
+	handler := cors.Default().Handler(router)
+	log.Fatal(http.ListenAndServe(":8000", handler))
 }

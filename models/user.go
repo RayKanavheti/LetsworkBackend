@@ -36,12 +36,14 @@ func validateEmail(email string) bool {
 }
 
 // SendConfirmationLink method sends a link to the user's email with a uuid generated code for verification
-func SendConfirmationLink(userEmail string) {
+func SendConfirmationLink(userEmail string, uuidCode string) {
 	m := gomail.NewMessage()
 	m.SetHeader("From", "ray@health263.systems")
 	m.SetHeader("To", userEmail)
 	m.SetHeader("Subject", "Confirmation Link")
-	m.SetBody("text/html", `<!DOCTYPE html><html><head></head><body><h2>This is a test</h2></body></html>`)
+	m.SetBody("text/html", `<!DOCTYPE html><html><head></head><body><h2>This is a test</h2>
+		<h3>Confirmation Link: </h3>
+		<p><a href="http://localhost:4200/activate?usercode=`+uuidCode+`" target="_blank">Click this link to activate your account</a></p</body></html>`)
 
 	d := gomail.NewDialer("mail.health263.systems", 25, "ray@health263.systems", "Raycanas199425%")
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
@@ -67,7 +69,7 @@ func CreateUser(user User) (User, error) {
 	if err == nil {
 		err := db.Save(&user).Error
 		if err == nil {
-			go SendConfirmationLink(user.Email)
+			go SendConfirmationLink(user.Email, user.UUID)
 			return user, nil
 		}
 		return user, errors.New("Unable to create user for session " + err.Error())
