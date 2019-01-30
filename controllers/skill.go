@@ -10,7 +10,7 @@ import (
 //SkillController interface
 type SkillController struct{}
 
-// CreateSkills creates a new Skill for a user
+// CreateSkills creates a new Skill for a skill
 func (catCntrl *SkillController) CreateSkills(w http.ResponseWriter, r *http.Request) {
 	responseWriter := util.GetResponseWriter(w, r)
 	defer responseWriter.Close()
@@ -35,5 +35,23 @@ func (catCntrl *SkillController) CreateSkills(w http.ResponseWriter, r *http.Req
 				responseWriter.WriteHeader(400)
 				responseWriter.Write(errj)
 			}
+	}
+}
+
+//GetAllSkills gets all Skills
+func (catCntrl *SkillController) GetAllSkills(w http.ResponseWriter, req *http.Request) {
+	skills, err := models.GetSkills()
+	if err == nil {
+		w.Header().Add("Content Type", "application/json")
+		responseWriter := util.GetResponseWriter(w, req)
+		defer responseWriter.Close()
+		data, err := json.Marshal(skills)
+		if err == nil {
+			responseWriter.Write(data)
+		} else {
+			errj, _ := json.Marshal(err)
+			responseWriter.WriteHeader(404)
+			responseWriter.Write(errj)
+		}
 	}
 }
