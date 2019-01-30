@@ -97,7 +97,7 @@ func GetUsers() ([]User, error) {
 	db, err := getDBConnection()
 	defer db.Close()
 	if err == nil {
-		db.Preload("Profile").Preload("Educations").Preload("Address").Preload("Portfolios").Preload("Financial").Find(&users)
+		db.Preload("Profile").Preload("Educations").Preload("Address").Preload("Portfolios").Preload("Skills").Find(&users)
 		if err == nil {
 			return users, nil
 		}
@@ -112,7 +112,7 @@ func GetUserByID(id int) (User, error) {
 	db, err := getDBConnection()
 	defer db.Close()
 	if err == nil {
-		db.Preload("Profile").Where("id = ?", id).Find(&user)
+		db.Preload("Profile").Preload("Educations").Preload("Skills").Preload("Portfolios").Preload("Address").Where("id = ?", id).Find(&user)
 		if err == nil {
 			if user.ID == 0 {
 				return user, errors.New("Unable to get user for session")
