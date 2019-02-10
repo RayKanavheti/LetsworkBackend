@@ -12,5 +12,5 @@ type Bank struct {
   AccountNumber  string `sql:"type:VARCHAR(25)"`
   BranchCode     string `sql:"type:VARCHAR(25)"`
   BranchName     string `sql:"type:VARCHAR(50)"`
-  FinancialID     uint
+  FinancialID     uint `sql:"not null"`
 }

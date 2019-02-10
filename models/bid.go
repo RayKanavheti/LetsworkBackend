@@ -15,8 +15,8 @@ type Bid struct {
 	MilestonePercentage float32 `sql:"DEFAULT:0.00"`
 	Awarded             bool
 	DurationInDays      string `sql:"type:VARCHAR(3)"`
-	ProjectID           uint
-	BidderID            uint
+	ProjectID           uint `sql:"not null"`
+	BidderID            uint `sql:"not null"`
 }
 
 // CreateBid method creates a bid for a project

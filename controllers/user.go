@@ -59,8 +59,8 @@ func (catCntrl *UserController) CreateUser(w http.ResponseWriter, r *http.Reques
 	}
 }
 //UpdateUser method update a user
-
 func (catCntrl *UserController) UpdateUser(w http.ResponseWriter, r *http.Request) {
+
 	responseWriter := util.GetResponseWriter(w, r)
 	defer responseWriter.Close()
 	user := models.User{}

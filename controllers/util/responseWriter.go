@@ -39,9 +39,10 @@ func (gzipRespWtr closeableResponseWriter) Close() {
 
 //GetResponseWriter : Custom Response Writer for compressing/gzip content
 func GetResponseWriter(w http.ResponseWriter, req *http.Request) CloseableResponseWriter {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if strings.Contains(req.Header.Get("Accept-Encoding"), "gzip") {
-		w.Header().Set("Content-Encoding", "gzip")
 		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Content-Encoding", "gzip")
 		gRW := gzipResponseWriter{
 			ResponseWriter: w,
 			Writer:         gzip.NewWriter(w),

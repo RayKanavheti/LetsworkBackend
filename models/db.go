@@ -34,7 +34,7 @@ func autoMigrateTables() error {
 	if err == nil {
     db.SingularTable(true)
 		db.Debug().AutoMigrate(&User{}, &Profile{}, &Address{}, &Education{}, &Portfolio{}, &Financial{}, &Bank{}, &Ecocash{},
-			&WorkDone{}, &Project{}, &ProjectCategory{}, &Bid{}, &Review{}, &ReputationData{}, &Task{}, &CategoryRating{}, &OverallRating{}, &Skill{},
+			&WorkDone{}, &Project{}, &ProjectFile{}, &ProjectCategory{}, &Bid{}, &Review{}, &ReputationData{}, &Task{}, &CategoryRating{}, &OverallRating{}, &Skill{},
 			&Notification{}, &ReleasedFund{}, &FundAccount{})
 		if err == nil {
 			return nil

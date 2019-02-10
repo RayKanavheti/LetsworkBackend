@@ -2,7 +2,7 @@ package models
 
 import (
 	"errors"
-
+"github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/jinzhu/gorm"
 )
 
@@ -11,7 +11,7 @@ type Education struct {
 	gorm.Model
 	InstitutionName string `sql:"type:VARCHAR(50)"`
 	EducationType   string `sql:"type:VARCHAR(50)"`
-	Period          JSONB  `sql:"type:jsonb"` // start date and end date
+	Period          postgres.Jsonb  `sql:"type:jsonb"` // start date and end date
 	UserID          uint
 }
 

@@ -2,23 +2,30 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/astaxie/beego/validation"
+	"github.com/gorilla/mux"
 	"github.com/raykanavheti/LetsworkBackend/controllers/util"
 	"github.com/raykanavheti/LetsworkBackend/models"
 )
+
 // ProjectController interface
 type ProjectController struct{}
 
 // CreateProject creates a new project
 func (ProjCtrl *ProjectController) CreateProject(w http.ResponseWriter, r *http.Request) {
 	responseWriter := util.GetResponseWriter(w, r)
+
+	//	file, handle, err := r.FormFile("file")
 	defer responseWriter.Close()
 	project := models.Project{}
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&project)
 
+	err := decoder.Decode(&project)
+	fmt.Printf("Project %v", r.Body)
 	if err != nil {
 		mapError := map[string]string{"message": err.Error()}
 		errj, _ := json.Marshal(mapError)
@@ -48,9 +55,10 @@ func (ProjCtrl *ProjectController) CreateProject(w http.ResponseWriter, r *http.
 		}
 	}
 }
+
 // UpdateProject updates a project
 func (ProjCtrl *ProjectController) UpdateProject(w http.ResponseWriter, r *http.Request) {
-  responseWriter := util.GetResponseWriter(w, r)
+	responseWriter := util.GetResponseWriter(w, r)
 	defer responseWriter.Close()
 	project := models.Project{}
 	decoder := json.NewDecoder(r.Body)
@@ -84,4 +92,31 @@ func (ProjCtrl *ProjectController) UpdateProject(w http.ResponseWriter, r *http.
 			}
 		}
 	}
+}
+
+//GetProjectsByStatus gets all projects related to the owner depending on the status of the project
+func (ProjCtrl *ProjectController) GetProjectsByStatus(w http.ResponseWriter, req *http.Request) {
+		responseWriter := util.GetResponseWriter(w, req)
+	vars := mux.Vars(req)
+	OwnerIDRaw := vars["OwnerID"]
+	Status := vars["Status"]
+	OwnerID, err1 := strconv.Atoi(OwnerIDRaw)
+	if err1 == nil {
+	projects, err := models.GetProjectsByOpenProject(OwnerID, Status)
+	if err == nil {
+		w.Header().Add("Content Type", "application/json")
+		defer responseWriter.Close()
+		data, err := json.Marshal(projects)
+		if err == nil {
+			responseWriter.Write(data)
+		} else {
+			errj, _ := json.Marshal(err)
+			responseWriter.WriteHeader(404)
+			responseWriter.Write(errj)
+		}
+	}
+} else {
+	responseWriter.WriteHeader(400)
+	responseWriter.Write([]byte(err1.Error()))
+}
 }

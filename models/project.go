@@ -1,49 +1,46 @@
 package models
 
 import (
-	"database/sql/driver"
-	"encoding/json"
+	// "database/sql/driver"
+	// "encoding/json"
 	"errors"
-
+"github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/jinzhu/gorm"
 )
 
 // JSONB type definition
-type JSONB map[string]interface{}
+// type JSONB map[string]interface{}
 
 // Project model
 type Project struct {
 	gorm.Model
-	Title       string
-	Description string
-	DocPath1    string
-	DocPath2    string
-	DocPath3    string
-	Duration    string
-	IsComplete  bool
-	Status      string
-	Assisted    bool
-	Budget      JSONB             `sql:"type:jsonb"`
-	ProjectType string            // fixed or hourly
-	Jobs        []ProjectCategory `gorm:"many2many:job_projcat;"`
-	Tasks       []*Task           `gorm:"foreignkey:ProjectID"`
-	Bids        []*Bid            `gorm:"association_save_reference:false;foreignkey:ProjectID"`
-	OwnerID     uint
+	Title        string
+	Description  string
+	Duration     string
+	ProjectFiles []*ProjectFile `gorm:"foreignkey:ProjectID"`
+	Status       string // in-progress, open, completed
+	Assisted     bool
+	Budget       postgres.Jsonb              `sql:"type:jsonb"`
+	ProjectType  string            // fixed or hourly
+	Jobs         []Skill `gorm:"many2many:project_skills;"`
+	Tasks        []*Task           `gorm:"foreignkey:ProjectID"`
+	Bids         []*Bid            `gorm:"association_save_reference:false;foreignkey:ProjectID"`
+	OwnerID      uint
 }
 
 // Value method
-func (j JSONB) Value() (driver.Value, error) {
-	valueString, err := json.Marshal(j)
-	return string(valueString), err
-}
-
-// Scan method
-func (j *JSONB) Scan(value interface{}) error {
-	if err := json.Unmarshal(value.([]byte), &j); err != nil {
-		return err
-	}
-	return nil
-}
+// func (j JSONB) Value() (driver.Value, error) {
+// 	valueString, err := json.Marshal(j)
+// 	return string(valueString), err
+// }
+//
+// // Scan method
+// func (j *JSONB) Scan(value interface{}) error {
+// 	if err := json.Unmarshal(value.([]byte), &j); err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
 
 // CreateProject method creates a new project
 func CreateProject(userProject Project) (Project, error) {
@@ -93,7 +90,23 @@ func GetProjectByID(id int) (Project, error) {
 	return project, errors.New("Unable to getdatabase connection")
 }
 
-// GetProjectByAssignerID method gets an array of projects based on the User/ AssignerID/ Project OwnerID
+// GetProjectsByOpenProject method get projects by owner id and the status of the project
+func GetProjectsByOpenProject(OwnerId int, Status string) ([]Project, error) {
+	projects := []Project{}
+	db, err := getDBConnection()
+	defer db.Close()
+	if err == nil {
+		db.Preload("Jobs").Preload("Tasks").Where("owner_id = ? AND status = ?", OwnerId, Status).Find(&projects)
+		if err == nil {
+			return projects, nil
+		}
+		return []Project{}, errors.New("Unable to get project for session")
+	}
+	return projects, errors.New("Unable to getdatabase connection")
+}
+
+
+// GetProjectByAssignerID method gets an array of projects based on the User/ AssignerID/ Project OwnerID who cretated it
 func GetProjectByAssignerID(AssignerID int) ([]Project, error) {
 	projects := []Project{}
 	db, err := getDBConnection()
