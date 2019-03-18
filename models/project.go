@@ -10,9 +10,6 @@ import (
 	"github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// JSONB type definition
-// type JSONB map[string]interface{}
-
 // Project model
 type Project struct {
 	gorm.Model
@@ -79,13 +76,28 @@ func GetProjectByID(id int) (Project, error) {
 	return project, errors.New("Unable to getdatabase connection")
 }
 
-// GetProjectsByOpenProject method get projects by owner id and the status of the project
-func GetProjectsByOpenProject(OwnerID int, Status string) ([]Project, error) {
+// GetProjectsByStatusAndOwnerID method get projects by owner id and the status of the project
+func GetProjectsByStatusAndOwnerID(OwnerID int, Status string) ([]Project, error) {
 	projects := []Project{}
 	db, err := getDBConnection()
 	defer db.Close()
 	if err == nil {
 		db.Preload("Jobs").Preload("Tasks").Preload("Bids").Preload("ProjectFiles").Where("owner_id = ? AND status = ?", OwnerID, Status).Find(&projects)
+		if err == nil {
+			return projects, nil
+		}
+		return []Project{}, errors.New("Unable to get project for session")
+	}
+	return projects, errors.New("Unable to getdatabase connection")
+}
+
+// GetAllProjectsByStatus method gets all projects by status of the project
+func GetAllProjectsByStatus(Status string) ([]Project, error) {
+	projects := []Project{}
+	db, err := getDBConnection()
+	defer db.Close()
+	if err == nil {
+		db.Preload("Jobs").Preload("Tasks").Preload("Bids").Preload("ProjectFiles").Where("status = ?", Status).Find(&projects)
 		if err == nil {
 			return projects, nil
 		}
