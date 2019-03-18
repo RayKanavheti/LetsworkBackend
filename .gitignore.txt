@@ -1,2 +1,2 @@
-# Ignore folder named `userfiles/`
+# Ignore folder named `userfiles`
 userfiles/
