@@ -1,2 +1,2 @@
-# Ignore folder named `static/`
-static/
+# Ignore folder named `userfiles/`
+userfiles/
