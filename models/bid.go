@@ -21,7 +21,6 @@ type Bid struct {
 
 // CreateBid method creates a bid for a project
 func CreateBid(bid Bid) (Bid, error) {
-
 	db, err := getDBConnection()
 	defer db.Close()
 	if err == nil {
@@ -32,4 +31,9 @@ func CreateBid(bid Bid) (Bid, error) {
 		return bid, errors.New("Unable to create user for session " + err.Error())
 	}
 	return bid, errors.New("Unable to getdatabase connection")
+}
+
+// UpdateBid method update a bid for a Project
+func UpdateBid() () {
+
 }

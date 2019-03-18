@@ -18,7 +18,6 @@ type Profile struct {
 	LinkedInProfile string `sql:"type:VARCHAR(150)"`
 	Website					string	`sql:"type:VARCHAR(150)"`
 	UserID          uint
-
 }
 
 // CreateProfile method creates a new user
