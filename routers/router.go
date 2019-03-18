@@ -56,6 +56,7 @@ func InitRoutes() *mux.Router {
 	router.HandleFunc("/api/project", project.CreateProject).Methods("POST")
 	router.HandleFunc("/api/project_update", project.UpdateProject).Methods("PUT")
 	router.HandleFunc("/api/projects_status/{OwnerID}/{Status}", project.GetProjectsByStatusAndOwnerId).Methods("GET")
+	router.HandleFunc("/api/projects_statusOnly/{Status}", project.GetallProjectsByStatus).Methods("GET")
 
 	router.HandleFunc("/api/files/{id}", projectFile.CreateProjectFiles).Methods("POST")
 
