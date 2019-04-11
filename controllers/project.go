@@ -126,7 +126,6 @@ func (ProjCtrl *ProjectController) GetallProjectsByStatus(w http.ResponseWriter,
 		responseWriter := util.GetResponseWriter(w, req)
 	vars := mux.Vars(req)
 	Status := vars["Status"]
-	if err1 == nil {
 	projects, err := models.GetAllProjectsByStatus(Status)
 	if err == nil {
 		w.Header().Add("Content Type", "application/json")
@@ -140,8 +139,5 @@ func (ProjCtrl *ProjectController) GetallProjectsByStatus(w http.ResponseWriter,
 			responseWriter.Write(errj)
 		}
 	}
-} else {
-	responseWriter.WriteHeader(400)
-	responseWriter.Write([]byte(err1.Error()))
-}
+
 }
